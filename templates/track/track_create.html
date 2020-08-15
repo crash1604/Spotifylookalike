@@ -1,0 +1,16 @@
+{% block content %}
+
+{% if title %}
+<h1>
+Add a new track
+{{ title }}
+</h1>
+
+{% endif %}
+
+<form method="POST" action='.'>{% csrf_token %}
+    {{ form }}
+    <button type='submit'>add</button>
+</form>
+
+{% endblock %}
