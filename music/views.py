@@ -22,6 +22,7 @@ def add_track(request):
         form = MusicEntry(request.POST, request.FILES)
         if form.is_valid():
             form.save()
+            return redirect('/home')
     else:
         form = MusicEntry()
     context = {"form": form,
@@ -40,17 +41,15 @@ def delete_track(request, track_id):
     return render(request, template_name, context)
 
 
-def modify_track(request, track_id):
+def update_track(request, track_id):
     obj = get_object_or_404(AudioTrack, id=track_id)
     template_name = 'track/track_update.html'
-    print('pt1')
     form = MusicEntry(request.POST or None, instance=obj)
-    print('pt2')
-    if form.is_valid() and request == 'POST':
-        print('pt3')
-        form.save()
-        print('saved')
-    context = {"title": f"Update {obj.title}",
-               "form": form}
-    print('lol u outta condition')
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            return redirect("/home/")
+    context = {"form": form,
+               "title": "update Music"
+               }
     return render(request, template_name, context)
