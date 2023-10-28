@@ -16,10 +16,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from .views import (
-    home_page
+    home_page,
+    login,
+    signup,
+    test_token
 )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('/', home_page),
+    path('', home_page),
+    path('login', login),
+    path('register', signup),
+    path('tokentest', test_token),
 ]
