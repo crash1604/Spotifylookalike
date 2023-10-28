@@ -3,10 +3,12 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 
 
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes , permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 
 from .serializers import UserSerializer
@@ -34,8 +36,10 @@ def signup(request):
     return Response(serializer.errors, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def test_token(request):
-    return Response({201})
+    return Response("the user is {}".format(request.user.username))
 
 def home_page(request):
     return HttpResponse("Welcome to Spotify home page")
