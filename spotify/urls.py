@@ -18,16 +18,8 @@ from django.urls import path
 from .views import (
     home_page
 )
-from music.views import (
-    track_detail_page,
-    add_track,
-)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('home', home_page),
-    path('music/<int:post_id>/', track_detail_page),
-    path('music/add/', add_track),
-
-
+    path('/', home_page),
 ]
