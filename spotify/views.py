@@ -41,5 +41,13 @@ def signup(request):
 def test_token(request):
     return Response("the user is {}".format(request.user.username))
 
+@api_view(['POST'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def logout(request):
+    user_token = Token.objects.get(user=request.user)
+    user_token.delete()
+    return Response("Logged out successfully", status=status.HTTP_200_OK)
+
 def home_page(request):
     return HttpResponse("Welcome to Spotify home page")

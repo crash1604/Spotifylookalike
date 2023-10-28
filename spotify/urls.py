@@ -19,13 +19,15 @@ from .views import (
     home_page,
     login,
     signup,
-    test_token
+    test_token,
+    logout
 )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home_page),
-    path('login', login),
-    path('register', signup),
-    path('tokentest', test_token),
+    path('login/', login),
+    path('register/', signup),
+    path('tokentest/', test_token),
+    path('logout/', logout),
 ]
