@@ -32,3 +32,26 @@ def get_tracks_by_album(request, album_name):
     tracks = Track.objects.filter(album=album)
     data = [{'title': track.title, 'artist': track.artist.name, 'album': track.album.title} for track in tracks]
     return JsonResponse(data, safe=False)
+
+# Read
+# get artists
+# get genres
+# get albums
+
+# Create
+# add tracks
+# add artists
+# add albums
+# add genres
+
+# Update
+# modify tracks
+# modify artists
+# modify albums
+# modify genres
+
+# Delete
+# delete tracks
+# delete artists
+# delete albums
+# delete genres
