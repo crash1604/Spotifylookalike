@@ -25,4 +25,7 @@ urlpatterns = [
     
     path('auth/', include('authentication.urls')),
     path('music/', include('music.urls')),
+    path('album/', include('album.urls')),
+    path('artist/', include('artist.urls')),
+    path('playlist/', include('playlist.urls'))
 ]
