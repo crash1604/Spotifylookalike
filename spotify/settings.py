@@ -42,7 +42,10 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     
     'music',
-    'authentication'
+    'authentication',
+    'artist',
+    'album',
+    'playlist'
 
 ]
 

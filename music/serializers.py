@@ -12,3 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'password', 'email']
         
+class ArtistSerializer(serializers.ModelSerializer):
+    class Meta(object):
+        model = Artist
+        fields = ['name', 'biography', 'genres']

@@ -3,30 +3,48 @@ from django.http import JsonResponse
 
 from .models import Track, Artist, Genre, Album
 
-# Create your views here.
+from rest_framework.decorators import api_view, authentication_classes , permission_classes
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
+# Create your views here.
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def get_all_tracks(request):
     music_files = Track.objects.all()
     data = [{'title': track.title, 'artist': track.artist.name, 'album': track.album.title} for track in music_files]
     return JsonResponse(data, safe=False)
 
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def get_tracks_by_name(request, track_name):
     tracks = Track.objects.filter(title__icontains=track_name)
     data = [{'title': track.title, 'artist': track.artist.name, 'album': track.album.title} for track in tracks]
     return JsonResponse(data, safe=False)
 
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def get_tracks_by_artist_name(request, artist_name):
     artist = Artist.objects.get(name=artist_name)
     tracks = Track.objects.filter(artist=artist)
     data = [{'title': track.title, 'artist': track.artist.name, 'album': track.album.title} for track in tracks]
     return JsonResponse(data, safe=False)
 
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def get_tracks_by_genre(request, genre):
     genre_name = Genre.objects.get(name=genre)
     tracks = Track.objects.filter(genre=genre_name)
     data = [{'title': track.title, 'artist': track.artist.name, 'album': track.album.title} for track in tracks]
     return JsonResponse(data, safe=False)
 
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def get_tracks_by_album(request, album_name):
     album = Album.objects.get(title=album_name)
     tracks = Track.objects.filter(album=album)
@@ -35,6 +53,17 @@ def get_tracks_by_album(request, album_name):
 
 # Read
 # get artists
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_artists(requests):
+    print("inside get artists")
+    artists = Artist.objects.all()
+    print(Artist.objects.all())
+    data = [{'name': artist.name, 'biography': artist.biography } for artist in artists]
+    print(data)
+    return JsonResponse(data, safe=False)
+
 # get genres
 # get albums
 
