@@ -5,7 +5,7 @@ from .models import Track, Artist, Album
 class TrackSerializer(serializers.ModelSerializer):
     class Meta(object):
         model = Track
-        fields = ['id', 'title', 'artist', 'album', 'duration', 'release_date', 'genre', 'audio_file']
+        fields = '__all__'
         
 class UserSerializer(serializers.ModelSerializer):
     class Meta(object):
