@@ -9,7 +9,7 @@ class Genre(models.Model):
         return self.name
 
 class Track(models.Model):
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=20, unique=True)
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE)
     album = models.ForeignKey(Album, on_delete=models.CASCADE)
     duration = models.DurationField()

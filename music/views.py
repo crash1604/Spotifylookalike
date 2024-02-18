@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -11,6 +11,12 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.permissions import IsAuthenticated
 
 from datetime import datetime, timedelta
+
+# Supplimental functions
+
+def get_track_id_by_name(track_name):
+    track_id = Track.objects.filter(title=track_name).values_list('id', flat=True).first()
+    return track_id
 
 # Create your views here.
 @api_view(['GET'])
@@ -71,7 +77,7 @@ def get_artists(requests):
     return JsonResponse(data, safe=False)
 
 
-@api_view(['GET', 'POST'])
+@api_view(['POST'])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def add_track(request): 
@@ -113,47 +119,22 @@ def add_track(request):
     else:
         return "this page needs a POST request"
     
+@api_view(['DELETE'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def delete_track(request, track_name):
+    if request.method == "DELETE":
+        # Retrieve the track instance or return a 404 response if not found
+        track = get_object_or_404(Track, title=track_name)
 
+        # Check if the user has permission to delete the track (optional)
+        # You may want to customize this based on your authentication logic
+        if not request.user.has_perm('delete_track', track):
+            return JsonResponse({'error': 'Permission denied'}, status=403)
 
-# @api_view(['POST'])
-# def login(request):
-#     user = get_object_or_404(User, username=request.data['username'])
-#     if not user.check_password(request.data['password']):
-#         return Response("missing user", status=status.HTTP_404_NOT_FOUND)
-#     token, created = Token.objects.get_or_create(user=user)
-#     serializer = UserSerializer(user)
-#     return Response({'token': token.key, 'user': serializer.data})
-# @api_view(['GET', 'POST'])
-# def snippet_list(request):
-#     """
-#     List all code snippets, or create a new snippet.
-#     """
-#     if request.method == 'GET':
-#         snippets = Snippet.objects.all()
-#         serializer = SnippetSerializer(snippets, many=True)
-#         return Response(serializer.data)
+        # Delete the track
+        track.delete()
 
-#     elif request.method == 'POST':
-#         serializer = SnippetSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-# Create
-# add tracks
-# add artists
-# add albums
-# add genres
-
-# Update
-# modify tracks
-# modify artists
-# modify albums
-# modify genres
-
-# Delete
-# delete tracks
-# delete artists
-# delete albums
-# delete genres
+        return JsonResponse({'success': 'Track deleted successfully'}, status=200)
+    else:
+        return JsonResponse({'error': 'This view requires a DELETE request'}, status=400)
