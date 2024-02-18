@@ -6,17 +6,12 @@ from django.utils.decorators import method_decorator
 from .models import Track, Artist, Genre, Album
 from .serializers import TrackSerializer
 
+from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes , permission_classes
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from datetime import datetime, timedelta
-
-# Supplimental functions
-
-def get_track_id_by_name(track_name):
-    track_id = Track.objects.filter(title=track_name).values_list('id', flat=True).first()
-    return track_id
 
 # Create your views here.
 @api_view(['GET'])
@@ -138,3 +133,39 @@ def delete_track(request, track_name):
         return JsonResponse({'success': 'Track deleted successfully'}, status=200)
     else:
         return JsonResponse({'error': 'This view requires a DELETE request'}, status=400)
+
+
+
+@api_view(['PUT', 'PATCH'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def update_track(request, track_name):
+    try:
+        track = Track.objects.get(title=track_name)
+    except Track.DoesNotExist:
+        return JsonResponse({'error': f'Track with Name {track_name} does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'PUT' or request.method == 'PATCH':
+        if 'title' in request.data:
+            track.title = request.data['title']
+        if 'duration' in request.data:
+            track.duration = timedelta(
+                hours=int(request.data.get('duration').split(":")[0]),
+                minutes=int(request.data.get('duration').split(":")[1]),
+                seconds=int(request.data.get('duration').split(":")[2])
+                )
+        if 'release_date' in request.data:
+            track.release_date = datetime.strptime(request.data.get('release_date'),'%Y-%d-%m')
+        if 'audio_file' in request.data:
+            track.audio_file = request.data['audio_file']
+        if 'artist' in request.data:
+            track.artist_id = request.data['artist']
+        if 'album' in request.data:
+            track.album_id = request.data['album']
+        if 'genre' in request.data:
+            track.genre_id = request.data['genre']
+
+        track.save()
+        return JsonResponse({'success': f'Track with Name {track_name} updated successfully'}, status=status.HTTP_200_OK)
+
+    return JsonResponse({'error': 'This view requires a PUT or PATCH request'}, status=status.HTTP_400_BAD_REQUEST)
