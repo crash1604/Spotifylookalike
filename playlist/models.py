@@ -8,7 +8,7 @@ from music.models import Track
 
 # Create your models here.
 class Playlist(models.Model):
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=200, unique=True)
     creation_date = models.DateField()
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     cover_art = models.ImageField(upload_to='albums/', blank=True, null=True)

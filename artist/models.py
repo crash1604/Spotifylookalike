@@ -2,7 +2,7 @@ from django.db import models
 from django.apps import apps
 
 class Artist(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     biography = models.TextField(blank=True)
     genres = models.ManyToManyField('music.Genre', related_name='artists', blank=True)
   
