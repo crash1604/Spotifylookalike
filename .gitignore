@@ -1,0 +1,59 @@
+# Ignore compiled Python files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore the virtual environment folder
+venv/
+
+# Ignore the database file
+db.sqlite3
+
+# Ignore local development settings
+local_settings.py
+
+# Ignore logs and other generated files
+*.log
+*.bak
+*.swp
+
+# Ignore user-specific files
+*.sublime-project
+*.sublime-workspace
+*.suo
+*.user
+*.sln
+*.vscode/
+
+# Ignore environment-specific files
+.env
+
+# Ignore compiled binaries
+*.exe
+*.dll
+*.out
+*.app
+
+# Ignore node_modules directory
+node_modules/
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore editor backup files
+*~
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore Docker-related files
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Ignore credentials and sensitive information
+secrets.yml
+
+# Ignore files
+/media/

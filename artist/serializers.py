@@ -5,4 +5,4 @@ from .models import Artist
 class ArtistSerializer(serializers.ModelSerializer):
     class Meta(object):
         model = Artist
-        fields = ['name', 'biography', 'genres']
+        fields = '__all__'
