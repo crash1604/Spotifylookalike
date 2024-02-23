@@ -19,8 +19,8 @@ def get_all_albums(request):
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def get_album_by_name(request, album_name):
-    album_files = Album.objects.filter(title__icontains=album_name)
+def get_album_by_artist_and_name(request,artist_name , album_name):
+    album_files = Album.objects.filter(artist__name__exact=artist_name, title__exact=album_name)
     data = [{'title': album.title, 'artist': album.artist.name} for album in album_files]
     return JsonResponse(data, safe=False)
 
