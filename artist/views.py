@@ -65,3 +65,17 @@ def delete_artist_by_name(request, artist_name):
     # Delete the artist
     artist.delete()
     return Response({'message': 'Artist deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['PUT'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def modify_artist_by_name(request, artist_name):
+    # Retrieve the artist or return a 404 response if not found
+    artist = get_object_or_404(Artist, name__exact=artist_name)
+
+    # Update the artist data
+    serializer = ArtistSerializer(artist, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
