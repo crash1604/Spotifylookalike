@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.core.serializers import serialize
 
@@ -53,3 +53,15 @@ def add_new_artist(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response({'error': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+
+
+@api_view(['DELETE'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def delete_artist_by_name(request, artist_name):
+    # Retrieve the artist or return a 404 response if not found
+    artist = get_object_or_404(Artist, name__exact=artist_name)
+    # Delete the artist
+    artist.delete()
+    return Response({'message': 'Artist deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
