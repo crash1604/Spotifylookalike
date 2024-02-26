@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 
 from .models import Playlist
+from .serializers import PlaylistSerializer
 from music.models import Track
 
 from rest_framework.decorators import api_view, authentication_classes , permission_classes
@@ -75,3 +76,17 @@ def remove_from_playlist_by_name(request, playlist_name):
         tracks = Track.objects.filter(id__in=track_ids)
         playlist.track_list.remove(*tracks)
         return Response({'message': f'Tracks removed from {playlist.title} successfully'})
+    
+@api_view(['POST'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def create_new_playlist(request):
+    if request.method == 'POST':
+        request.data['owner'] = request.user.id
+        serializer = PlaylistSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(owner=request.user) 
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+    else:
+        return Response({'error': 'Method not allowed'}, status=405)
