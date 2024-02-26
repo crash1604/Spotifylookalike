@@ -1,11 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 
 from .models import Playlist
+from music.models import Track
 
 from rest_framework.decorators import api_view, authentication_classes , permission_classes
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 # Create your views here.
 @api_view(['GET'])
@@ -48,3 +50,21 @@ def get_playlist_by_name(request, playlist_name):
         }
         data.append(playlist_data)
     return JsonResponse(data, safe=False)
+
+@api_view(['PUT'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def add_to_playlist_by_name(request, playlist_name):
+    playlist = get_object_or_404(Playlist, title__exact=playlist_name)
+    
+    if request.method == 'PUT':
+        # Assuming you send track IDs in the request data
+        track_ids = request.data.get('track_ids', [])
+        
+        # Retrieve the tracks with the given IDs
+        tracks = Track.objects.filter(id__in=track_ids)
+
+        # Add the retrieved tracks to the playlist's track_list
+        playlist.track_list.add(*tracks)
+
+        return Response({'message': f'Tracks added to {playlist.title} successfully'})
