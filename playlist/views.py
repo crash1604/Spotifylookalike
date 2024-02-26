@@ -58,13 +58,20 @@ def add_to_playlist_by_name(request, playlist_name):
     playlist = get_object_or_404(Playlist, title__exact=playlist_name)
     
     if request.method == 'PUT':
-        # Assuming you send track IDs in the request data
         track_ids = request.data.get('track_ids', [])
-        
-        # Retrieve the tracks with the given IDs
         tracks = Track.objects.filter(id__in=track_ids)
-
-        # Add the retrieved tracks to the playlist's track_list
         playlist.track_list.add(*tracks)
-
         return Response({'message': f'Tracks added to {playlist.title} successfully'})
+    
+@api_view(['DELETE'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def remove_from_playlist_by_name(request, playlist_name):
+    playlist = get_object_or_404(Playlist, title__exact=playlist_name)
+    
+    if request.method == 'DELETE':
+        # Remove tracks from the playlist
+        track_ids = request.data.get('track_ids', [])
+        tracks = Track.objects.filter(id__in=track_ids)
+        playlist.track_list.remove(*tracks)
+        return Response({'message': f'Tracks removed from {playlist.title} successfully'})
