@@ -8,11 +8,11 @@ Welcome to SpotifyLookalike, a small music streaming app built with Django and D
    - CRUD operations for albums.
    - Endpoints specified in `album/urls.py`.
    - **Endpoints:**
-    - `/album/`: Get all albums
-    - `/album/add/`: Add a new album
-    - `/album/tracklist/<str:artist_name>/<str:album_name>/`: Get tracks by album name and artist
-    - `/album/<str:artist_name>/<str:album_name>/`: Get album by artist and name
-    - `/album/<str:artist_name>/`: Get albums by artist
+   - - `/album/`: Get all albums
+   - - `/album/add/`: Add a new album
+   - - `/album/tracklist/<str:artist_name>/<str:album_name>/`: Get tracks by album name and artist
+   - - `/album/<str:artist_name>/<str:album_name>/`: Get album by artist and name
+   - - `/album/<str:artist_name>/`: Get albums by artist
 
    Note: Album settings are intentionally not modifiable for simplicity.
 
