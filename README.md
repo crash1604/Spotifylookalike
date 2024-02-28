@@ -1,6 +1,6 @@
 # SpotifyLookalike
 
-Welcome to SpotifyLookalike, a small music streaming app built with Django and Django Rest Framework. This project aims to provide basic functionalities similar to Spotify, including managing albums, artists, user authentication, music tracks, and playlists.
+Welcome to SpotifyLookalike, a small music streaming app's backend built with Django and Django Rest Framework. This project aims to provide basic functionalities similar to Spotify, including managing albums, artists, user authentication, music tracks, and playlists.
 
 ## Modules
 
