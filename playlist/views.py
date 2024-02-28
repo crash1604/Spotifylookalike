@@ -90,3 +90,17 @@ def create_new_playlist(request):
         return Response(serializer.errors, status=400)
     else:
         return Response({'error': 'Method not allowed'}, status=405)
+ 
+@api_view(['DELETE'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])   
+def delete_playlist_by_name(request, playlist_name):
+    if request.method == "DELETE":
+        # Retrieve the playlist instance or return a 404 response if not found
+        playlist = get_object_or_404(Playlist, title__exact=playlist_name)
+
+        playlist.delete()
+        return JsonResponse({'success': 'Playlist deleted successfully'}, status=200)
+    
+    else:
+        return JsonResponse({'error': 'This view requires a DELETE request'}, status=400)
