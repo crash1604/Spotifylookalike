@@ -1,0 +1,276 @@
+# Login
+POST http://127.0.0.1:8000/auth/login/
+content-type: application/json
+{
+    "username": "root",
+    "password": "toor"
+}
+
+###
+
+# Register
+POST http://127.0.0.1:8000/auth/register/
+content-type: application/json
+
+{ 
+    "username": "username", 
+    "password": "Pass", 
+    "email": "@mail.com" }
+
+###
+
+# token test
+GET http://127.0.0.1:8000/auth/tokentest/
+content-type: application/json
+Authorization: token 3e356c812614c3d4344e0d06773c27387b1e4c12
+
+###
+
+# get all music 
+GET http://127.0.0.1:8000/music/
+Content-Type: application/json
+Authorization: token 3e356c812614c3d4344e0d06773c27387b1e4c12
+
+###
+
+# get all artists
+GET http://127.0.0.1:8000/artist/
+Content-Type: application/json
+Authorization: token 3e356c812614c3d4344e0d06773c27387b1e4c12
+
+###
+
+# get all albums
+GET http://127.0.0.1:8000/album/
+Content-Type: application/json
+Authorization: token 3e356c812614c3d4344e0d06773c27387b1e4c12
+
+###
+
+# get album data by artist and album name 
+GET http://127.0.0.1:8000/album/TheWeeknd/Starboy
+Content-Type: application/json
+Authorization: token 3e356c812614c3d4344e0d06773c27387b1e4c12
+
+###
+
+# get information of a specific artist
+GET http://127.0.0.1:8000/artist/Drake
+Content-Type: application/json
+Authorization: token 3e356c812614c3d4344e0d06773c27387b1e4c12
+
+###
+
+# get all playlists
+GET http://127.0.0.1:8000/playlist
+Content-Type: application/json
+Authorization: token 3e356c812614c3d4344e0d06773c27387b1e4c12
+
+###
+
+# get data from a specific playlist
+GET http://127.0.0.1:8000/playlist/Playlist1Test
+Content-Type: application/json
+Authorization: token 3e356c812614c3d4344e0d06773c27387b1e4c12
+
+###
+
+# add a music file
+POST http://localhost:8000/music/add/
+Content-Type: application/json
+Authorization: token 3e356c812614c3d4344e0d06773c27387b1e4c12
+
+{
+  "title": "Evil Ways", 
+  "duration": "00:03:47", 
+  "release_date": "2023-09-03", 
+  "audio_file": "/media/tracks/Music_Library.musiclibrary.zip", 
+  "artist": 2, 
+  "album": 2, 
+  "genre": 1
+}
+
+###
+
+# delete music
+DELETE http://127.0.0.1:8000/music/TestToDelete/delete/
+Authorization: token 3e356c812614c3d4344e0d06773c27387b1e4c12
+
+###
+
+# modify music 
+PUT http://127.0.0.1:8000/music/TestToModify/update/
+Authorization: token 3e356c812614c3d4344e0d06773c27387b1e4c12
+Content-Type: application/json
+
+{
+    "title": "UpdatedTitle",
+    "duration": "00:02:22",
+    "release_date": "2002-02-2",
+    "audio_file": "/media/tracks/Music_Library.musiclibrary.zip",
+    "artist": 2,
+    "album": 2,
+    "genre": 1
+}
+
+###
+
+# add a new artist
+POST http://127.0.0.1:8000/artist/add/
+Content-Type: application/json
+Authorization: token 3e356c812614c3d4344e0d06773c27387b1e4c12
+
+{
+  "name": "Test1",
+  "biography": "test1",
+  "genres": [3]
+}
+
+###
+
+# delete an artist
+DELETE http://127.0.0.1:8000/artist/Test1/delete/
+Authorization: Token 3e356c812614c3d4344e0d06773c27387b1e4c12
+
+###
+
+# modify an artist
+PUT http://127.0.0.1:8000/artist/PostMalone2/modify/
+Content-Type: application/json
+Authorization: Token 3e356c812614c3d4344e0d06773c27387b1e4c12
+
+{
+  "name": "PostMalone",
+  "bio": "Updated biography back to real name",
+  "image": "path/to/updated_image.jpg",
+  "genres": [1,2,3]
+}
+
+###
+
+# prerequesite for testing add Album
+POST http://127.0.0.1:8000/music/add/
+Content-Type: application/json
+Authorization: token 3e356c812614c3d4344e0d06773c27387b1e4c12
+
+{
+  "title": "albumtesttrack1", 
+  "duration": "00:01:11", 
+  "release_date": "2001-01-01", 
+  "audio_file": "/media/tracks/Music_Library.musiclibrary.zip", 
+  "artist": 2, 
+  "album": 4, 
+  "genre": 1
+}
+
+###
+
+# prerequesite for testing add Album
+POST http://127.0.0.1:8000/music/add/
+Content-Type: application/json
+Authorization: token 3e356c812614c3d4344e0d06773c27387b1e4c12
+
+{
+  "title": "albumtesttrack2", 
+  "duration": "00:01:11", 
+  "release_date": "2001-01-01", 
+  "audio_file": "/media/tracks/Music_Library.musiclibrary.zip", 
+  "artist": 2, 
+  "album": 4, 
+  "genre": 1
+}
+
+###
+
+# prerequesite for testing add Album
+POST http://127.0.0.1:8000/music/add/
+Content-Type: application/json
+Authorization: token 3e356c812614c3d4344e0d06773c27387b1e4c12
+
+{
+  "title": "albumtesttrack3", 
+  "duration": "00:01:11", 
+  "release_date": "2001-01-01", 
+  "audio_file": "/media/tracks/Music_Library.musiclibrary.zip", 
+  "artist": 2, 
+  "album": 4, 
+  "genre": 1
+}
+
+###
+
+# create a new album
+POST http://127.0.0.1:8000/album/add/
+Content-Type: application/json
+Authorization: Token 3e356c812614c3d4344e0d06773c27387b1e4c12
+
+{
+  "title": "TEst",
+  "release_date": "2024-02-23",
+  "artist": 1,
+  "cover_art": "something.png"
+}
+
+###
+
+# gets the data for the album including music files
+GET http://127.0.0.1:8000/album/tracklist/TheWeeknd/TEst
+Content-Type: application/json
+Authorization: token 3e356c812614c3d4344e0d06773c27387b1e4c12
+
+###
+
+# get all playlists
+GET http://127.0.0.1:8000/playlist/
+Content-Type: application/json
+Authorization: Token 3e356c812614c3d4344e0d06773c27387b1e4c12
+
+###
+
+# Get playlist by name
+GET http://127.0.0.1:8000/playlist/PlaylistCreateTest/
+Content-Type: application/json
+Authorization: Token 3e356c812614c3d4344e0d06773c27387b1e4c12
+
+###
+
+# Add tracks to the playlist
+PUT http://127.0.0.1:8000/playlist/addTo/PlaylistCreateTest/
+Content-Type: application/json
+Authorization: Token 3e356c812614c3d4344e0d06773c27387b1e4c12
+
+{
+  "track_ids": [1,2,3,4,5,6,7,8,9]
+}
+
+###
+
+# remove tracks from the playlist
+DELETE http://127.0.0.1:8000/playlist/removeFrom/Playlist1Test/
+Content-Type: application/json
+Authorization: Token 3e356c812614c3d4344e0d06773c27387b1e4c12
+
+{
+  "track_ids": [9]
+}
+
+###
+
+# Create a new playlist
+POST http://127.0.0.1:8000/playlist/new/
+Content-Type: application/json
+Authorization: Token 3e356c812614c3d4344e0d06773c27387b1e4c12
+
+{
+  "title": "PlaylistDeleteTest",
+  "creation_date": "2022-01-01"
+}
+
+###
+
+# Delete a Playlist
+DELETE http://127.0.0.1:8000/playlist/delete/PlaylistDeleteTest/
+Content-Type: application/json
+Authorization: Token 3e356c812614c3d4344e0d06773c27387b1e4c12
+
+###
