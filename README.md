@@ -8,7 +8,7 @@ Welcome to SpotifyLookalike, a small music streaming app built with Django and D
    - CRUD operations for albums.
    - Endpoints specified in `album/urls.py`.
    - **Endpoints:**
-   - - `/album/`: Get all albums
+      - `/album/`: Get all albums
    - - `/album/add/`: Add a new album
    - - `/album/tracklist/<str:artist_name>/<str:album_name>/`: Get tracks by album name and artist
    - - `/album/<str:artist_name>/<str:album_name>/`: Get album by artist and name
@@ -21,18 +21,18 @@ Welcome to SpotifyLookalike, a small music streaming app built with Django and D
    - One artist can have multiple albums.
    - Endpoints specified in `artist/urls.py`.
    - **Endpoints:**
-    - `/artist/`: Get all artists
-    - `/artist/add/`: Add a new artist
-    - `/artist/<str:artist_name>/delete/`: Delete artist by name
-    - `/artist/<str:artist_name>/modify/`: Modify artist by name
-    - `/artist/<str:artist_name>/`: Get artist by name
+   - - `/artist/`: Get all artists
+   - - `/artist/add/`: Add a new artist
+   - - `/artist/<str:artist_name>/delete/`: Delete artist by name
+   - - `/artist/<str:artist_name>/modify/`: Modify artist by name
+   - - `/artist/<str:artist_name>/`: Get artist by name
 
 ### 3. **Authentication Module**
    - Token-based authentication for securing all views.
    - Implemented for ensuring secure access to the entire application.
    - Endpoints specified in `authentication/urls.py`.
    - **Endpoints:**
-    - `/auth/login/`: User login
+     - `/auth/login/`: User login
     - `/auth/register/`: User registration
     - `/auth/tokentest/`: Token test
     - `/auth/logout/`: User logout
