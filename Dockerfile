@@ -1,0 +1,65 @@
+# Production Dockerfile for Music Streaming API
+# Multi-stage build for smaller image size
+
+# Build stage
+FROM python:3.11-slim as builder
+
+WORKDIR /app
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.txt
+
+# Production stage
+FROM python:3.11-slim
+
+# Create non-root user for security
+RUN groupadd -r spotify && useradd -r -g spotify spotify
+
+WORKDIR /app
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy wheels from builder stage
+COPY --from=builder /app/wheels /wheels
+COPY --from=builder /app/requirements.txt .
+
+# Install Python packages
+RUN pip install --no-cache /wheels/*
+
+# Copy application code
+COPY --chown=spotify:spotify . .
+
+# Create directories for logs and media
+RUN mkdir -p /app/logs /app/media /app/staticfiles && \
+    chown -R spotify:spotify /app/logs /app/media /app/staticfiles
+
+# Collect static files
+RUN python manage.py collectstatic --noinput
+
+# Switch to non-root user
+USER spotify
+
+# Expose port
+EXPOSE 8000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/')" || exit 1
+
+# Run with gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "4", "--threads", "2", \
+     "--worker-class", "gthread", "--worker-tmp-dir", "/dev/shm", \
+     "--access-logfile", "-", "--error-logfile", "-", \
+     "--capture-output", "--enable-stdio-inheritance", \
+     "spotify.wsgi:application"]
