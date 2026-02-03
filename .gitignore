@@ -1,59 +1,125 @@
-# Ignore compiled Python files
+# =============================================================================
+# Environment & Secrets
+# =============================================================================
+.env
+.env.local
+.env.*.local
+*.env
+secrets.yml
+*.pem
+*.key
+
+# =============================================================================
+# Python
+# =============================================================================
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# Ignore the virtual environment folder
+# =============================================================================
+# Virtual Environments
+# =============================================================================
 venv/
+ENV/
+env/
+.venv/
 
-# Ignore the database file
-db.sqlite3
-
-# Ignore local development settings
-local_settings.py
-
-# Ignore logs and other generated files
-*.log
-*.bak
+# =============================================================================
+# IDE & Editors
+# =============================================================================
+.idea/
+.vscode/
 *.swp
-
-# Ignore user-specific files
+*.swo
+*~
 *.sublime-project
 *.sublime-workspace
 *.suo
 *.user
 *.sln
-*.vscode/
 
-# Ignore environment-specific files
-.env
+# =============================================================================
+# Django
+# =============================================================================
+*.log
+local_settings.py
+db.sqlite3
+*.sqlite3
 
-# Ignore compiled binaries
+# =============================================================================
+# Static and Media Files
+# =============================================================================
+staticfiles/
+/media/
+
+# =============================================================================
+# Logs
+# =============================================================================
+logs/
+*.log
+*.bak
+
+# =============================================================================
+# Testing & Coverage
+# =============================================================================
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+
+# =============================================================================
+# Celery
+# =============================================================================
+celerybeat-schedule
+celerybeat.pid
+
+# =============================================================================
+# Nginx SSL Certificates (keep structure, ignore certs)
+# =============================================================================
+nginx/ssl/*.pem
+nginx/ssl/*.key
+!nginx/ssl/.gitkeep
+
+# =============================================================================
+# macOS
+# =============================================================================
+.DS_Store
+
+# =============================================================================
+# Jupyter
+# =============================================================================
+.ipynb_checkpoints/
+
+# =============================================================================
+# Compiled Binaries
+# =============================================================================
 *.exe
 *.dll
 *.out
 *.app
 
-# Ignore node_modules directory
+# =============================================================================
+# Node.js (if frontend)
+# =============================================================================
 node_modules/
-
-# Ignore macOS system files
-.DS_Store
-
-# Ignore editor backup files
-*~
-
-# Ignore Jupyter Notebook checkpoints
-.ipynb_checkpoints/
-
-# Ignore Docker-related files
-Dockerfile
-docker-compose.yml
-.dockerignore
-
-# Ignore credentials and sensitive information
-secrets.yml
-
-# Ignore files
-/media/
