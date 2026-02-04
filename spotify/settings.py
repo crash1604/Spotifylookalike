@@ -74,6 +74,8 @@ INSTALLED_APPS = [
     'health_check.db',
     'health_check.cache',
     'health_check.storage',
+    'channels',
+    'django_elasticsearch_dsl',
 
     # Local apps
     'music',
@@ -81,8 +83,11 @@ INSTALLED_APPS = [
     'artist',
     'album',
     'playlist',
-    'streaming',  # New app for audio streaming
-    'core',  # Shared utilities and base classes
+    'streaming',
+    'core',
+    'transcoding',
+    'search',
+    'realtime',
 ]
 
 MIDDLEWARE = [
@@ -508,3 +513,45 @@ EMAIL_USE_TLS = get_env('EMAIL_USE_TLS', 'True', cast=bool)
 EMAIL_HOST_USER = get_env('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = get_env('EMAIL_HOST_PASSWORD', '')
 DEFAULT_FROM_EMAIL = get_env('DEFAULT_FROM_EMAIL', 'noreply@spotify.com')
+
+
+# =============================================================================
+# DJANGO CHANNELS (WEBSOCKETS)
+# =============================================================================
+
+ASGI_APPLICATION = 'spotify.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [get_env('REDIS_URL', 'redis://localhost:6379/0')],
+        },
+    } if not DEBUG else {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    }
+}
+
+
+# =============================================================================
+# ELASTICSEARCH CONFIGURATION
+# =============================================================================
+
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': get_env('ELASTICSEARCH_URL', 'http://localhost:9200'),
+        'timeout': 30,
+    },
+} if get_env('ELASTICSEARCH_URL') else {}
+
+# Auto-sync models to ES on save/delete
+ELASTICSEARCH_DSL_AUTOSYNC = get_env('ELASTICSEARCH_DSL_AUTOSYNC', 'True', cast=bool)
+ELASTICSEARCH_DSL_PARALLEL = True
+
+
+# =============================================================================
+# FFMPEG CONFIGURATION (AUDIO TRANSCODING)
+# =============================================================================
+
+FFMPEG_BINARY = get_env('FFMPEG_BINARY', 'ffmpeg')
+FFPROBE_BINARY = get_env('FFPROBE_BINARY', 'ffprobe')

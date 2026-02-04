@@ -70,6 +70,12 @@ urlpatterns = [
 
         # Streaming
         path('stream/', include('streaming.urls')),
+
+        # Transcoding (admin-only)
+        path('transcode/', include('transcoding.urls')),
+
+        # Search (Elasticsearch-powered with ORM fallback)
+        path('search/', include('search.urls')),
     ])),
 
     # ==========================================================================

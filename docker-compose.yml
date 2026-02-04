@@ -27,6 +27,7 @@ services:
       - DATABASE_PORT=5432
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/1
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
     volumes:
       - media_data:/app/media
       - static_data:/app/staticfiles
@@ -35,6 +36,8 @@ services:
       db:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      elasticsearch:
         condition: service_healthy
     networks:
       - spotify-network
@@ -105,6 +108,7 @@ services:
       - DATABASE_PORT=5432
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/1
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
     volumes:
       - media_data:/app/media
     depends_on:
@@ -142,6 +146,61 @@ services:
       - spotify-network
 
   # ==========================================================================
+  # Elasticsearch (Search Engine)
+  # ==========================================================================
+  elasticsearch:
+    image: elasticsearch:8.12.0
+    container_name: spotify-elasticsearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    networks:
+      - spotify-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  # ==========================================================================
+  # Daphne ASGI Server (WebSocket Support)
+  # ==========================================================================
+  websocket:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spotify-websocket
+    restart: unless-stopped
+    command: daphne -b 0.0.0.0 -p 8001 spotify.asgi:application
+    ports:
+      - "8001:8001"
+    environment:
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-change-me-in-production}
+      - DJANGO_DEBUG=False
+      - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,web,websocket
+      - DATABASE_ENGINE=django.db.backends.postgresql
+      - DATABASE_NAME=spotify_db
+      - DATABASE_USER=spotify_user
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-spotify_password}
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - spotify-network
+
+  # ==========================================================================
   # Nginx Reverse Proxy (Production)
   # ==========================================================================
   nginx:
@@ -169,6 +228,8 @@ volumes:
   postgres_data:
     driver: local
   redis_data:
+    driver: local
+  es_data:
     driver: local
   media_data:
     driver: local
