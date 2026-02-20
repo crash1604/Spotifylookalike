@@ -3,6 +3,7 @@ ViewSets for artist-related endpoints.
 """
 
 import logging
+from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.core.serializers import serialize
@@ -35,7 +36,10 @@ class ArtistViewSet(viewsets.ModelViewSet):
     """
     ViewSet for Artist CRUD operations.
     """
-    queryset = Artist.objects.prefetch_related('genres', 'tracks', 'album_set')
+    queryset = Artist.objects.prefetch_related('genres').annotate(
+        track_count=Count('tracks', distinct=True),
+        album_count=Count('album_set', distinct=True),
+    )
     permission_classes = [IsAuthenticated, IsAdminOrReadOnly]
     pagination_class = StandardResultsSetPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]

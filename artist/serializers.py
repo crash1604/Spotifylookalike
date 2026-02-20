@@ -21,9 +21,13 @@ class ArtistListSerializer(serializers.ModelSerializer):
         return [genre.name for genre in obj.genres.all()]
 
     def get_track_count(self, obj):
+        if hasattr(obj, 'track_count'):
+            return obj.track_count
         return obj.tracks.count()
 
     def get_album_count(self, obj):
+        if hasattr(obj, 'album_count'):
+            return obj.album_count
         return obj.album_set.count()
 
 
@@ -50,9 +54,13 @@ class ArtistDetailSerializer(serializers.ModelSerializer):
         return [genre.name for genre in obj.genres.all()]
 
     def get_track_count(self, obj):
+        if hasattr(obj, 'track_count'):
+            return obj.track_count
         return obj.tracks.count()
 
     def get_album_count(self, obj):
+        if hasattr(obj, 'album_count'):
+            return obj.album_count
         return obj.album_set.count()
 
     def get_total_plays(self, obj):

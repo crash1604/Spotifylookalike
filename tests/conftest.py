@@ -3,6 +3,7 @@ Pytest configuration and fixtures for the music streaming API tests.
 """
 
 import pytest
+from unittest.mock import MagicMock, patch
 from rest_framework.test import APIClient
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User
@@ -14,6 +15,8 @@ from tests.factories import (
     AlbumFactory,
     TrackFactory,
     PlaylistFactory,
+    TranscodedTrackFactory,
+    StreamSessionFactory,
 )
 
 
@@ -198,3 +201,68 @@ def large_dataset(db, genres):
         'tracks': tracks,
         'genres': genres
     }
+
+
+# =============================================================================
+# Mock Fixtures for External Services
+# =============================================================================
+
+@pytest.fixture
+def mock_ffmpeg():
+    """Patch subprocess.run to simulate FFmpeg execution without actual FFmpeg."""
+    mock_result = MagicMock()
+    mock_result.returncode = 0
+    mock_result.stdout = ''
+    mock_result.stderr = ''
+    with patch('transcoding.service.subprocess.run', return_value=mock_result) as mock_run:
+        yield mock_run
+
+
+@pytest.fixture
+def mock_ffprobe():
+    """Patch ffprobe subprocess to return fake audio metadata."""
+    import json
+    fake_metadata = {
+        'format': {'duration': '210.5', 'bit_rate': '320000', 'size': '8400000'},
+        'streams': [{
+            'codec_type': 'audio',
+            'codec_name': 'mp3',
+            'sample_rate': '44100',
+            'channels': 2,
+            'bit_rate': '320000',
+        }],
+    }
+    mock_result = MagicMock()
+    mock_result.returncode = 0
+    mock_result.stdout = json.dumps(fake_metadata)
+    mock_result.stderr = ''
+    with patch('transcoding.service.subprocess.run', return_value=mock_result) as mock_run:
+        yield mock_run
+
+
+@pytest.fixture
+def mock_elasticsearch(monkeypatch):
+    """Patch Elasticsearch DSL search to avoid needing a real ES instance."""
+    mock_hit = MagicMock()
+    mock_hit.meta.id = '1'
+    mock_hit.meta.score = 1.0
+
+    mock_response = MagicMock()
+    mock_response.__iter__ = MagicMock(return_value=iter([mock_hit]))
+
+    mock_search = MagicMock()
+    mock_search.query.return_value = mock_search
+    mock_search.filter.return_value = mock_search
+    mock_search.__getitem__ = MagicMock(return_value=mock_search)
+    mock_search.execute.return_value = mock_response
+
+    monkeypatch.setattr('search.documents.TrackDocument.search', lambda: mock_search)
+    monkeypatch.setattr('search.documents.ArtistDocument.search', lambda: mock_search)
+    monkeypatch.setattr('search.documents.AlbumDocument.search', lambda: mock_search)
+    return mock_search
+
+
+@pytest.fixture
+def other_user(db):
+    """A second user – useful for testing ownership/isolation."""
+    return UserFactory(username='other_user')

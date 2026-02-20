@@ -135,3 +135,33 @@ class UserFavoriteFactory(DjangoModelFactory):
 
     user = factory.SubFactory(UserFactory)
     track = factory.SubFactory(TrackFactory)
+
+
+class StreamSessionFactory(DjangoModelFactory):
+    """Factory for creating StreamSession instances."""
+
+    class Meta:
+        model = 'streaming.StreamSession'
+
+    user = factory.SubFactory(UserFactory)
+    track = factory.SubFactory(TrackFactory)
+    session_id = factory.Sequence(lambda n: f'session_{n:08x}')
+    quality = 'medium'
+    is_active = True
+
+
+class TranscodedTrackFactory(DjangoModelFactory):
+    """Factory for creating TranscodedTrack instances."""
+
+    class Meta:
+        model = 'transcoding.TranscodedTrack'
+        django_get_or_create = ('original_track', 'quality')
+
+    original_track = factory.SubFactory(TrackFactory)
+    quality = 'medium'
+    codec = 'mp3'
+    bitrate = 160
+    status = 'completed'
+    file = factory.LazyAttribute(
+        lambda _: ContentFile(b'\xff\xfb\x90\x00' + b'\x00' * 100, name='transcoded.mp3')
+    )

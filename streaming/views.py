@@ -14,6 +14,7 @@ import re
 import mimetypes
 import logging
 from django.conf import settings
+from django.db import models
 from django.http import StreamingHttpResponse, HttpResponse, FileResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -316,5 +317,3 @@ def clear_play_history(request):
     })
 
 
-# Import models at runtime to avoid circular imports
-from django.db import models

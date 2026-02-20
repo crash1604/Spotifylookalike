@@ -130,29 +130,21 @@ ASGI_APPLICATION = 'spotify.asgi.application'
 # =============================================================================
 
 # Use PostgreSQL for production, SQLite for development
-if get_env('DATABASE_ENGINE', 'sqlite'):
-    if 'postgresql' in get_env('DATABASE_ENGINE', ''):
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql',
-                'NAME': get_env('DATABASE_NAME', 'spotify_db'),
-                'USER': get_env('DATABASE_USER', 'spotify_user'),
-                'PASSWORD': get_env('DATABASE_PASSWORD', ''),
-                'HOST': get_env('DATABASE_HOST', 'localhost'),
-                'PORT': get_env('DATABASE_PORT', '5432'),
-                'CONN_MAX_AGE': 60,  # Connection pooling
-                'OPTIONS': {
-                    'connect_timeout': 10,
-                },
-            }
+if 'postgresql' in get_env('DATABASE_ENGINE', 'sqlite'):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': get_env('DATABASE_NAME', 'spotify_db'),
+            'USER': get_env('DATABASE_USER', 'spotify_user'),
+            'PASSWORD': get_env('DATABASE_PASSWORD', ''),
+            'HOST': get_env('DATABASE_HOST', 'localhost'),
+            'PORT': get_env('DATABASE_PORT', '5432'),
+            'CONN_MAX_AGE': 60,  # Connection pooling
+            'OPTIONS': {
+                'connect_timeout': 10,
+            },
         }
-    else:
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': BASE_DIR / 'db.sqlite3',
-            }
-        }
+    }
 else:
     DATABASES = {
         'default': {

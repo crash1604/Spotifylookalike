@@ -19,6 +19,9 @@ class GenreSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'slug', 'track_count']
 
     def get_track_count(self, obj):
+        # Use annotated value when available (avoids N+1 on list views)
+        if hasattr(obj, 'track_count'):
+            return obj.track_count
         return obj.tracks.count()
 
 

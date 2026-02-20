@@ -9,6 +9,7 @@ Provides:
 
 import logging
 from django.conf import settings
+from django.db import models
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -60,7 +61,32 @@ def unified_search(request):
     genre_slug = request.query_params.get('genre')
     year_from = request.query_params.get('year_from')
     year_to = request.query_params.get('year_to')
-    limit = min(int(request.query_params.get('limit', 10)), 50)
+
+    try:
+        limit = min(int(request.query_params.get('limit', 10)), 50)
+    except (ValueError, TypeError):
+        return Response(
+            {'error': {'code': 'invalid_limit', 'message': '"limit" must be an integer.'}},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if year_from is not None:
+        try:
+            year_from = int(year_from)
+        except (ValueError, TypeError):
+            return Response(
+                {'error': {'code': 'invalid_year', 'message': '"year_from" must be an integer year.'}},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    if year_to is not None:
+        try:
+            year_to = int(year_to)
+        except (ValueError, TypeError):
+            return Response(
+                {'error': {'code': 'invalid_year', 'message': '"year_to" must be an integer year.'}},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     if _es_available():
         return _es_search(query, restrict_type, genre_slug, year_from, year_to, limit)
@@ -90,7 +116,10 @@ def autocomplete(request):
     if not query or len(query) < 2:
         return Response({'suggestions': []})
 
-    limit = min(int(request.query_params.get('limit', 5)), 20)
+    try:
+        limit = min(int(request.query_params.get('limit', 5)), 20)
+    except (ValueError, TypeError):
+        limit = 5
 
     if _es_available():
         return _es_autocomplete(query, limit)
@@ -288,5 +317,3 @@ def _orm_autocomplete(query, limit):
     return Response({'suggestions': suggestions[:limit]})
 
 
-# Import at module level for ORM fallback
-from django.db import models  # noqa: E402

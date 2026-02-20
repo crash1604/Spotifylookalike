@@ -9,7 +9,7 @@ Uses Django REST Framework ViewSets for:
 """
 
 import logging
-from django.db.models import F
+from django.db.models import F, Count
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.shortcuts import get_object_or_404
@@ -194,7 +194,7 @@ class GenreViewSet(viewsets.ModelViewSet):
     """
     ViewSet for Genre CRUD operations.
     """
-    queryset = Genre.objects.all()
+    queryset = Genre.objects.annotate(track_count=Count('tracks'))
     serializer_class = GenreSerializer
     permission_classes = [IsAuthenticated, IsAdminOrReadOnly]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
