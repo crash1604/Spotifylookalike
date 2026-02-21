@@ -56,4 +56,4 @@ def get_logger(name):
         logger = get_logger(__name__)
         logger.info('Something happened', extra={'user_id': 123})
     """
-    return logging.getLogger(f'spotify.{name}')
+    return logging.getLogger(f'lookalike.{name}')

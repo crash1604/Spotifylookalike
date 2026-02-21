@@ -1,4 +1,4 @@
-# Spotifylookalike – Production Music Streaming Backend
+# LookALike – Production Music Streaming Backend
 
 A production-ready REST API backend for a music streaming service, built with Django REST Framework. Supports audio streaming with HTTP Range requests, background transcoding via FFmpeg and Celery, full-text search with Elasticsearch, real-time WebSocket notifications, and JWT authentication.
 
@@ -900,7 +900,7 @@ Django signals that bridge synchronous ORM events to async Channel layer message
 ```bash
 # 1. Clone the repository
 git clone <repo-url>
-cd Spotifylookalike
+cd LookALike
 
 # 2. Create and activate a virtual environment
 python -m venv venv

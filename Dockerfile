@@ -20,7 +20,7 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.t
 FROM python:3.11-slim
 
 # Create non-root user for security
-RUN groupadd -r spotify && useradd -r -g spotify spotify
+RUN groupadd -r lookalike && useradd -r -g lookalike lookalike
 
 WORKDIR /app
 
@@ -38,17 +38,17 @@ COPY --from=builder /app/requirements.txt .
 RUN pip install --no-cache /wheels/*
 
 # Copy application code
-COPY --chown=spotify:spotify . .
+COPY --chown=lookalike:lookalike . .
 
 # Create directories for logs and media
 RUN mkdir -p /app/logs /app/media /app/staticfiles && \
-    chown -R spotify:spotify /app/logs /app/media /app/staticfiles
+    chown -R lookalike:lookalike /app/logs /app/media /app/staticfiles
 
 # Collect static files
 RUN python manage.py collectstatic --noinput
 
 # Switch to non-root user
-USER spotify
+USER lookalike
 
 # Expose port
 EXPOSE 8000

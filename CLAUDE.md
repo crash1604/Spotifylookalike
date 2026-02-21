@@ -1,12 +1,12 @@
-# CLAUDE.md – Spotifylookalike Project Guide
+# CLAUDE.md – LookALike Project Guide
 
-This file helps AI assistants understand the Spotifylookalike codebase, conventions, and workflows.
+This file helps AI assistants understand the LookALike codebase, conventions, and workflows.
 
 ---
 
 ## Project Overview
 
-**Spotifylookalike** is a production-ready Django REST Framework backend for a music streaming service.
+**LookALike** is a production-ready Django REST Framework backend for a music streaming service.
 
 **Tech stack:**
 - **Django 4.x** + **Django REST Framework** – HTTP API
@@ -25,7 +25,7 @@ This file helps AI assistants understand the Spotifylookalike codebase, conventi
 ## Directory Structure
 
 ```
-Spotifylookalike/
+LookALike/
 │
 ├── spotify/                # Django project package
 │   ├── settings.py         # All configuration (env-var driven)
@@ -211,7 +211,7 @@ Copy `.env.example` to `.env` before running locally.
 
 ```bash
 # 1. Clone and create virtual environment
-git clone <repo> && cd Spotifylookalike
+git clone <repo> && cd LookALike
 python -m venv venv && source venv/bin/activate
 
 # 2. Install dependencies

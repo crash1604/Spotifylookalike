@@ -11,7 +11,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: spotify-web
+    container_name: lookalike-web
     restart: unless-stopped
     ports:
       - "8000:8000"
@@ -20,9 +20,9 @@ services:
       - DJANGO_DEBUG=False
       - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,web
       - DATABASE_ENGINE=django.db.backends.postgresql
-      - DATABASE_NAME=spotify_db
-      - DATABASE_USER=spotify_user
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-spotify_password}
+      - DATABASE_NAME=lookalike_db
+      - DATABASE_USER=lookalike_user
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-lookalike_password}
       - DATABASE_HOST=db
       - DATABASE_PORT=5432
       - REDIS_URL=redis://redis:6379/0
@@ -40,7 +40,7 @@ services:
       elasticsearch:
         condition: service_healthy
     networks:
-      - spotify-network
+      - lookalike-network
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/')"]
       interval: 30s
@@ -53,18 +53,18 @@ services:
   # ==========================================================================
   db:
     image: postgres:15-alpine
-    container_name: spotify-db
+    container_name: lookalike-db
     restart: unless-stopped
     environment:
-      - POSTGRES_DB=spotify_db
-      - POSTGRES_USER=spotify_user
-      - POSTGRES_PASSWORD=${DATABASE_PASSWORD:-spotify_password}
+      - POSTGRES_DB=lookalike_db
+      - POSTGRES_USER=lookalike_user
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD:-lookalike_password}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - spotify-network
+      - lookalike-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U spotify_user -d spotify_db"]
+      test: ["CMD-SHELL", "pg_isready -U lookalike_user -d lookalike_db"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -74,13 +74,13 @@ services:
   # ==========================================================================
   redis:
     image: redis:7-alpine
-    container_name: spotify-redis
+    container_name: lookalike-redis
     restart: unless-stopped
     command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     volumes:
       - redis_data:/data
     networks:
-      - spotify-network
+      - lookalike-network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -94,16 +94,16 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: spotify-celery
+    container_name: lookalike-celery
     restart: unless-stopped
     command: celery -A spotify worker -l INFO --concurrency=2
     environment:
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-change-me-in-production}
       - DJANGO_DEBUG=False
       - DATABASE_ENGINE=django.db.backends.postgresql
-      - DATABASE_NAME=spotify_db
-      - DATABASE_USER=spotify_user
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-spotify_password}
+      - DATABASE_NAME=lookalike_db
+      - DATABASE_USER=lookalike_user
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-lookalike_password}
       - DATABASE_HOST=db
       - DATABASE_PORT=5432
       - REDIS_URL=redis://redis:6379/0
@@ -115,7 +115,7 @@ services:
       - db
       - redis
     networks:
-      - spotify-network
+      - lookalike-network
 
   # ==========================================================================
   # Celery Beat (Scheduled Tasks)
@@ -124,16 +124,16 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: spotify-celery-beat
+    container_name: lookalike-celery-beat
     restart: unless-stopped
     command: celery -A spotify beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
     environment:
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-change-me-in-production}
       - DJANGO_DEBUG=False
       - DATABASE_ENGINE=django.db.backends.postgresql
-      - DATABASE_NAME=spotify_db
-      - DATABASE_USER=spotify_user
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-spotify_password}
+      - DATABASE_NAME=lookalike_db
+      - DATABASE_USER=lookalike_user
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-lookalike_password}
       - DATABASE_HOST=db
       - DATABASE_PORT=5432
       - REDIS_URL=redis://redis:6379/0
@@ -143,14 +143,14 @@ services:
       - redis
       - celery
     networks:
-      - spotify-network
+      - lookalike-network
 
   # ==========================================================================
   # Elasticsearch (Search Engine)
   # ==========================================================================
   elasticsearch:
     image: elasticsearch:8.12.0
-    container_name: spotify-elasticsearch
+    container_name: lookalike-elasticsearch
     restart: unless-stopped
     environment:
       - discovery.type=single-node
@@ -159,7 +159,7 @@ services:
     volumes:
       - es_data:/usr/share/elasticsearch/data
     networks:
-      - spotify-network
+      - lookalike-network
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
       interval: 15s
@@ -174,7 +174,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: spotify-websocket
+    container_name: lookalike-websocket
     restart: unless-stopped
     command: daphne -b 0.0.0.0 -p 8001 spotify.asgi:application
     ports:
@@ -184,9 +184,9 @@ services:
       - DJANGO_DEBUG=False
       - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,web,websocket
       - DATABASE_ENGINE=django.db.backends.postgresql
-      - DATABASE_NAME=spotify_db
-      - DATABASE_USER=spotify_user
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-spotify_password}
+      - DATABASE_NAME=lookalike_db
+      - DATABASE_USER=lookalike_user
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-lookalike_password}
       - DATABASE_HOST=db
       - DATABASE_PORT=5432
       - REDIS_URL=redis://redis:6379/0
@@ -198,14 +198,14 @@ services:
       redis:
         condition: service_healthy
     networks:
-      - spotify-network
+      - lookalike-network
 
   # ==========================================================================
   # Nginx Reverse Proxy (Production)
   # ==========================================================================
   nginx:
     image: nginx:alpine
-    container_name: spotify-nginx
+    container_name: lookalike-nginx
     restart: unless-stopped
     ports:
       - "80:80"
@@ -219,7 +219,7 @@ services:
     depends_on:
       - web
     networks:
-      - spotify-network
+      - lookalike-network
 
 # ==========================================================================
 # Volumes
@@ -242,5 +242,5 @@ volumes:
 # Networks
 # ==========================================================================
 networks:
-  spotify-network:
+  lookalike-network:
     driver: bridge
